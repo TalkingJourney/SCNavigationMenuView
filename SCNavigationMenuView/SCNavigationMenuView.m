@@ -139,6 +139,7 @@
     
     if (![menuCellClass conformsToProtocol:@protocol(SCNavigationMenuCellProtocol)]) return nil;
     
+    self.translatesAutoresizingMaskIntoConstraints = NO;
     _menuCellClass = menuCellClass;
     _currentIndex = NSUIntegerMax;
     _maxTitleWidth = 0;
@@ -169,7 +170,6 @@
     }
     
     _navigationMenuItems = navigationMenuItems;
-    _maxTitleWidth = 0;
     
     self.arrowImageView.hidden = navigationMenuItems.count <= 1;
     if (!navigationMenuItems || navigationMenuItems.count == 0) {
@@ -192,6 +192,7 @@
 
 - (void)reloadMaxTitleWidth
 {
+    self.maxTitleWidth = 0;
     for (id<SCNavigationMenuItemProtocol> navigationMenuItem in self.navigationMenuItems) {
         CGFloat width = [self sizeForFont:self.titleLabel.font text:navigationMenuItem.navigationTitle].width;
         if (width > self.maxTitleWidth) {
@@ -227,6 +228,7 @@
     }
     
     self.bounds = CGRectMake(0, 0, width, height);
+    [self invalidateIntrinsicContentSize];
     [self setNeedsDisplay];
 }
 
@@ -234,7 +236,12 @@
 {
     NSMutableDictionary *attr = [NSMutableDictionary new];
     attr[NSFontAttributeName] = font;
-    return [text boundingRectWithSize:CGSizeMake(100, 44) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attr context:nil].size;
+    return [text boundingRectWithSize:CGSizeMake(UIScreen.mainScreen.bounds.size.width, 44) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attr context:nil].size;
+}
+
+- (CGSize)intrinsicContentSize
+{
+    return self.bounds.size;
 }
 
 #pragma mark - UITableDataSource
