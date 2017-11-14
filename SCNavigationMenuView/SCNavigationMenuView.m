@@ -6,6 +6,7 @@
 
 @interface _SCMenuTableView : UIControl
 
+@property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, assign) Class menuCellClass;
 @property (nonatomic, weak) id<UITableViewDataSource, UITableViewDelegate> delegate;
 
@@ -14,12 +15,6 @@
 
 - (void)setTableViewHeight:(CGFloat)height;
 - (void)reloadTableViewData;
-
-@end
-
-@interface _SCMenuTableView ()
-
-@property (nonatomic, strong) UITableView *tableView;
 
 @end
 
@@ -173,7 +168,7 @@
     
     self.arrowImageView.hidden = navigationMenuItems.count <= 1;
     if (!navigationMenuItems || navigationMenuItems.count == 0) {
-        _maxTitleWidth = [self sizeForFont:self.titleLabel.font text:self.title ?: @""].width;
+        _maxTitleWidth = [self sizeForFont:self.titleLabel.font text:self.navigationTitle ?: @""].width;
         _currentIndex = NSUIntegerMax;
     } else {
         [self reloadMaxTitleWidth];
@@ -205,7 +200,7 @@
 {
     NSString *title;
     if (self.currentIndex >= self.navigationMenuItems.count) {
-        title = self.title ?: @"";
+        title = self.navigationTitle ?: @"";
     } else {
         title = self.navigationMenuItems[self.currentIndex].navigationTitle;
     }

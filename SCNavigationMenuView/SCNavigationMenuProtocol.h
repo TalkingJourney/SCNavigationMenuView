@@ -1,6 +1,7 @@
 
 #import <Foundation/Foundation.h>
 
+// 数据源item需要实现的协议
 @protocol SCNavigationMenuItemProtocol <NSObject>
 
 @required
@@ -19,10 +20,19 @@
 
 @required
 
-// 例如：@(44)
+// 返回cell的高度  例如：@(44)
 + (NSNumber *)cellHeightWithNavigationMenuItem:(id<SCNavigationMenuItemProtocol>)navigationMenuItem;
+
+// 返回cell重用ID
 + (NSString *)reuseID;
 
+
+/**
+ 配置cell的样式和内容
+
+ @param navigationMenuItem 数据源
+ @param selected cell是否被选中
+ */
 - (void)configCellWithNavigationMenuItem:(id<SCNavigationMenuItemProtocol>)navigationMenuItem selected:(BOOL)selected;
 
 @end
