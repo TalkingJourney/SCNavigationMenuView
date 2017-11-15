@@ -236,7 +236,13 @@
 
 - (CGSize)intrinsicContentSize
 {
-    return self.bounds.size;
+    CGSize size;
+    if (@available(iOS 11.0, *)) {
+        size = self.bounds.size;
+    } else {
+        size = [super intrinsicContentSize];
+    }
+    return size;
 }
 
 #pragma mark - UITableDataSource
