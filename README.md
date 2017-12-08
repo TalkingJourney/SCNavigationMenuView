@@ -1,7 +1,7 @@
 # SCNavigationMenuView
 # 功能
 通过点击NavigationTitle，我们可以切换不同的内容，写了一个控件[SCNavigationMenuView](https://github.com/TalkingJourney/SCNavigationMenuView)，实现如下图效果。
-![Demo动图.gif](http://upload-images.jianshu.io/upload_images/1635692-e9c09e2f1697abbf.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Demo动图.gif](https://raw.githubusercontent.com/TalkingJourney/SCNavigationMenuView/master/SCNavigationMenuVIewDemo/Snapshots/demo.gif)
 
 # 优点
 1. 可以通过更改数据源，动态的改变选项数量和文字内容；
