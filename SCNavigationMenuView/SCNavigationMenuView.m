@@ -7,13 +7,12 @@
 @interface _SCMenuTableView : UIControl
 
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, assign) Class menuCellClass;
-@property (nonatomic, weak) id<UITableViewDataSource, UITableViewDelegate> delegate;
 
 - (void)showWithDuration:(NSTimeInterval)duration animations:(MenuBlock)animations completion:(MenuBlock)completion;
 - (void)hideWithDuration:(NSTimeInterval)duration animations:(MenuBlock)animations completion:(MenuBlock)completion;
 
 - (void)setTableViewHeight:(CGFloat)height;
+- (void)setMenuCellClass:(Class<SCNavigationMenuCellProtocol>)menuCellClass delegate:(id<UITableViewDataSource, UITableViewDelegate>)delegate;
 - (void)reloadTableViewData;
 
 @end
@@ -69,27 +68,18 @@
     self.tableView.frame = CGRectMake(0, 0, self.bounds.size.width, height);
 }
 
-- (void)reloadTableViewData
+- (void)setMenuCellClass:(Class<SCNavigationMenuCellProtocol>)menuCellClass delegate:(id<UITableViewDataSource, UITableViewDelegate>)delegate
 {
-    [self.tableView reloadData];
-}
-
-- (void)setMenuCellClass:(Class)menuCellClass
-{
-    if (!menuCellClass) return;
-    if (![menuCellClass conformsToProtocol:@protocol(SCNavigationMenuCellProtocol)]) return;
-    if (![menuCellClass respondsToSelector:@selector(reuseID)]) return;
-    
-    NSString *reuseID = [menuCellClass performSelector:@selector(reuseID)];
+    NSString *reuseID = [menuCellClass reuseID];
     [self.tableView registerClass:menuCellClass forCellReuseIdentifier:reuseID];
-}
-
-- (void)setDelegate:(id<UITableViewDataSource, UITableViewDelegate>)delegate
-{
-    _delegate = delegate;
     
     self.tableView.dataSource = delegate;
     self.tableView.delegate = delegate;
+}
+
+- (void)reloadTableViewData
+{
+    [self.tableView reloadData];
 }
 
 - (UITableView *)tableView
@@ -116,7 +106,7 @@
 @property (nonatomic, strong) UIImageView *arrowImageView;
 @property (nonatomic, strong) _SCMenuTableView *menuTableView;
 
-@property (nonatomic, assign) Class menuCellClass;
+@property (nonatomic, assign) Class<SCNavigationMenuCellProtocol> menuCellClass;
 @property (nonatomic, assign) NSUInteger maxTitleWidth;
 
 @property (nonatomic, strong) UIView *menuContainer;
@@ -255,9 +245,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row >= self.navigationMenuItems.count) return nil;
-    if (![self.menuCellClass respondsToSelector:@selector(reuseID)]) return nil;
     
-    NSString *reuseID = [self.menuCellClass performSelector:@selector(reuseID)];
+    NSString *reuseID = [self.menuCellClass reuseID];
     UITableViewCell<SCNavigationMenuCellProtocol> *cell = [tableView dequeueReusableCellWithIdentifier:reuseID];
     
     id<SCNavigationMenuItemProtocol> item = self.navigationMenuItems[indexPath.row];
@@ -272,10 +261,9 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row >= self.navigationMenuItems.count) return CGFLOAT_MIN;
-    if (![self.menuCellClass respondsToSelector:@selector(cellHeightWithNavigationMenuItem:)]) return CGFLOAT_MIN;
     
     id<SCNavigationMenuItemProtocol> item = self.navigationMenuItems[indexPath.row];
-    NSNumber *cellHeight = [self.menuCellClass performSelector:@selector(cellHeightWithNavigationMenuItem:) withObject:item];
+    NSNumber *cellHeight = [self.menuCellClass cellHeightWithNavigationMenuItem:item];
     
     return cellHeight.floatValue;
 }
@@ -322,14 +310,13 @@
 - (void)showMenuWithCompletion:(MenuBlock)completion
 {
     if (self.selected) return;
-    if (![self.menuCellClass respondsToSelector:@selector(cellHeightWithNavigationMenuItem:)]) return;
     
     self.menuTableView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.6];
     self.menuTableView.frame = self.menuContainer.bounds;
     [self.menuContainer addSubview:self.menuTableView];
     CGFloat tableViewHeight = 0;
     for (id<SCNavigationMenuItemProtocol> item in self.navigationMenuItems) {
-        NSNumber *cellHeight = [self.menuCellClass performSelector:@selector(cellHeightWithNavigationMenuItem:) withObject:item];
+        NSNumber *cellHeight = [self.menuCellClass cellHeightWithNavigationMenuItem:item];
         tableViewHeight += cellHeight.floatValue;
     }
     [self.menuTableView setTableViewHeight:tableViewHeight];
@@ -409,8 +396,7 @@
 {
     if (!_menuTableView) {
         _menuTableView = [[_SCMenuTableView alloc] init];
-        _menuTableView.menuCellClass = self.menuCellClass;
-        _menuTableView.delegate = self;
+        [_menuTableView setMenuCellClass:self.menuCellClass delegate:self];
     }
     return _menuTableView;
 }
