@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "SCNavigationMenuView"
-  s.version      = "1.0.0"
+  s.version      = "1.0.1"
   s.summary      = "SCNavigationMenuView provide a NavigationBar MenuView."
   s.description  = "SCNavigationMenuView provide a NavigationBar MenuView. It is a easy way."
 
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, "8.0"
 
-  s.source       = { :git => "https://github.com/TalkingJourney/SCNavigationMenuView.git", :tag => "1.0.0" }
+  s.source       = { :git => "https://github.com/TalkingJourney/SCNavigationMenuView.git", :tag => "1.0.1" }
 
   s.source_files = "SCNavigationMenuView/**/*.{h,m,png}"
   s.public_header_files = "SCNavigationMenuView/**/*.h"
